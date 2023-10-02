@@ -28,7 +28,13 @@ Ten program został stworzony przy użyciu następujących technologii:
 
 2. Zainstaluj [Xampp](https://www.apachefriends.org/pl/download.html) aby móc uruchomić lokalną bazę danych MYSQL.
 
-3. Uruchom bazę oraz program i rozpocznij zarządzanie swoimi danymi dotyczącymi gier liczbowych.
+3. Uruchom xampp i włącz Apache oraz MySQL.
+
+4. Kliknij Admin przy MySQL lub wpisz w przeglądarkę "localhost".
+
+5. Stwórz bazę o nazwie "lotto", przejdź do tej bazy->Import i z importuj plik o nazwie "lotto_results.sql"
+
+6. Uruchom program i rozpocznij zarządzanie swoimi danymi dotyczącymi gier liczbowych. :)
 
 
 ## Autor
