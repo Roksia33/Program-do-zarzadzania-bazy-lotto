@@ -20,6 +20,32 @@ window_height = 940
 center_window(root, window_width, window_height)
 root.resizable(False,False)
 
+# Funkcja do sprawdzania statusu bazy danych MySQL
+def sprawdz_status_bazy():
+    try:
+        # Nawiązujemy połączenie z bazą danych
+        conn = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password=''
+        )
+
+        # Tworzymy kursor
+        cursor = conn.cursor()
+
+        # Wykonujemy polecenie SQL, aby sprawdzić status bazy
+        cursor.execute("SELECT 1")
+
+        # Jeśli wykonanie powyższego polecenia nie wygenerowało błędu,
+        # to baza danych jest włączona
+        status_label.config(text="włączona", fg="green")
+    except mysql.connector.Error as err:
+        # Jeśli pojawił się błąd, baza danych jest wyłączona
+        status_label.config(text="wyłączona!", fg="red")
+    finally:
+        if 'conn' in locals() and conn.is_connected():
+            conn.close()
+
 ####### Lotto #######
 def Lotto():
     subprocess.Popen(["python", "Lotto.py"])
@@ -114,6 +140,12 @@ notebook.pack(fill=tk.BOTH, expand=True)
 ####### Zakładka 1: Ekran startowy #######
 tab1 = tk.Frame(notebook)
 notebook.add(tab1, text="Strona główna")
+
+label_text= tk.Label(tab1, text="˃Statusu bazy danych MySQL: ", font=("Helvetica", 15))
+label_text.place(x=7,y=10)
+status_label = tk.Label(tab1, text="Sprawdzanie statusu...", fg="blue", font=("Helvetica", 15))
+status_label.place(x=285,y=10)
+sprawdz_status_bazy()
 
 label = tk.Label(tab1, text="Witaj w bazie Lotto!", font=("Helvetica", 25))
 label.pack(pady=80)
