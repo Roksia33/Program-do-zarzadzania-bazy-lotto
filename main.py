@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import NO, W, ttk, messagebox
+from tkinter import NO, W, ttk
 import datetime
 import mysql.connector
 import subprocess
@@ -82,7 +82,7 @@ def show_database_window():
     # Tworzenie nowego okna
     database_window = tk.Toplevel(root)
     database_window.title("")
-    database_window.geometry("1200x600")
+    database_window.geometry("1300x600")
     database_window.resizable(False,False)
 
     # Tworzenie tabelki do wyświetlenia danych z bazy
