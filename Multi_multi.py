@@ -1,21 +1,19 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import mysql.connector
-
-# Funkcja do ukrywania/możliwości wprowadzania liczb
-def toggle_entry_state():
-    entry_count = int(entry_num_var.get())
-    for i, entry in enumerate(number_entries):
-        if i < entry_count:
-            entry.config(state=tk.NORMAL)
-        else:
-            entry.delete(0, tk.END)
-            entry.config(state=tk.DISABLED)
 
 ####### Funkcja odświeżania pól do wpisania liczb #######
 def refresh_data():
     for entry_num in number_entries:
         entry_num.delete(0, tk.END)
+    entry_date.delete(0, tk.END)
+    option_time.delete(0, tk.END)
+
+####### Funkcja, która zapyta o wyjście z programu #######
+def exit_program():
+    result = messagebox.askquestion("Wyjście", "Czy na pewno chcesz wyjść z programu?")
+    if result == "yes":
+        root.quit()
 
 ####### Funkcja obsługująca zapis danych do bazy MySQL #######
 def save_to_database():
@@ -23,6 +21,8 @@ def save_to_database():
         # Pobieranie danych z pól tekstowych
         lotto_type = lotto_type_entry.get()
         numbers = [number_entries[i].get() for i in range(10)]
+        date = entry_date.get()
+        time = option_time.get()
 
 
         # Łączenie się z bazą danych MySQL
@@ -35,8 +35,8 @@ def save_to_database():
         cursor = conn.cursor()
 
         # Wstawianie danych do tabeli
-        cursor.execute("INSERT INTO lotto_results (lotto_type, number1, number2, number3, number4, number5, number6, number7, number8, number9, number10) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                       (lotto_type, *numbers))
+        cursor.execute("INSERT INTO lotto_results (lotto_type, number1, number2, number3, number4, number5, number6, number7, number8, number9, number10, date, time) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                       (lotto_type, *numbers, date, time))
         
         # Zatwierdzanie zmian i zamykanie połączenia
         conn.commit()
@@ -50,15 +50,11 @@ def save_to_database():
 # Tworzenie okna
 root = tk.Tk()
 root.title("Multi Multi")
-root.geometry("1500x230")
+root.geometry("1520x280")
 root.resizable(False,False)
 
 # Tworzenie etykiet i pól tekstowych dla danych
 label = tk.Label(root, text="", font=("Helvetica", 19)).grid(row=0, column=3)
-entry_num_var = tk.StringVar()
-num_label = tk.Label(root, text="Podaj ilość typowanych liczb:", font=("Helvetica", 14)).grid(row=2, column=0)
-num_entry = tk.Entry(root, textvariable=entry_num_var).grid(row=2, column=1)
-apply_button = tk.Button(root, text="Zastosuj", height = 2, width = 10, bg='#bf22af', command=toggle_entry_state).grid(row=2, column=2)
 
 label = tk.Label(root, text="", font=("Helvetica", 19)).grid(row=3, column=3)
 tk.Label(root, text="Typ lotto:", font=("Helvetica", 14)).grid(row=3, column=0)
@@ -72,20 +68,39 @@ lotto_type_entry.grid(row=3, column=1)
 tk.Label(root, text="Liczby (1-80):", font=("Helvetica", 14)).grid(row=4, column=0)
 number_entries = []
 for i in range(10):
-    entry = tk.Entry(root, state='disabled')
+    entry = tk.Entry(root)
     entry.grid(row=4, column=i+1)
     number_entries.append(entry)
 
+# Etykieta wybierania daty
+data_label = tk.Label(root, text="Wpisz datę (RRRR-MM-DD):", font=("Helvetica", 14))
+data_label.grid(row=5, column=0)
+label = tk.Label(root, text="", font=("Helvetica", 19)).grid(row=6, column=3)
+
+# Pole do wprowadzania daty
+entry_date = tk.Entry(root)
+entry_date.grid(row=5, column=1)
+
+# Etykieta wybierania godziny
+godzina_label = tk.Label(root, text="Wybierz godzinę:", font=("Helvetica", 14))
+godzina_label.grid(row=6, column=0)
+
+# Lista opcji dla godziny
+godziny = ["14:00","22:00"]
+option_time = ttk.Combobox(root, values=godziny)
+option_time.grid(row=6, column=1)
+
     
 # Przyciski do zapisu danych, wyjścia z programu oraz resetowania pól do wpisania liczb.
-label1 = tk.Label(root, text="", font=("Helvetica", 10)).grid(row=6, column=3)
+label1 = tk.Label(root, text="", font=("Helvetica", 10)).grid(row=7, column=3)
 button_refresh = tk.Button(root, text="Resetuj", height = 2, width = 10, bg='#bf22af', command=refresh_data, font=("Helvetica", 10))
 button_refresh.grid(row=8, column=2)
 save_button = tk.Button(root, text="Zapisz",height = 2, width = 10, bg='#bf22af', command=save_to_database, font=("Helvetica", 10))
 save_button.grid(row=8, column=3)
-button_exit = tk.Button(root, text="Wyjście",height = 2, width = 10, bg='#bf22af', command=root.quit, font=("Helvetica", 10))
+button_exit = tk.Button(root, text="Wyjście",height = 2, width = 10, bg='#bf22af', command=exit_program, font=("Helvetica", 10))
 button_exit.grid(row=8, column=4)
 
+root.protocol("WM_DELETE_WINDOW", exit_program)
 
 if __name__ == '__main__':
     root.mainloop()
