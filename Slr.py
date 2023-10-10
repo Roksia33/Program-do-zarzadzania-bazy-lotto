@@ -30,7 +30,7 @@ def get_database_stats():
     # Wyświetlenie informacji w oknie
     stat_label.config(text=f"Liczba rekordów w bazie danych: {result[0]}")
 
-# Tworzenie okna Tkinter
+# Tworzenie okna
 root = tk.Tk()
 root.title("")
 root.geometry("500x190")
@@ -40,11 +40,11 @@ root.resizable(False,False)
 stat_label = tk.Label(root, text="", font=("Helvetica", 16))
 stat_label.pack(pady=20)
 
-# Przycisk do pobierania informacji
+# Przycisk do pobierania informacji oraz wyjścia
 get_stats_button = tk.Button(root, text="Uruchom", height = 2, width = 10, bg='#ffb92d', command=get_database_stats, font=("Helvetica", 10))
 get_stats_button.pack(pady=5)
 button_exit = tk.Button(root, text="Wyjście",height = 2, width = 10, bg='#ffb92d', command=root.quit, font=("Helvetica", 10))
 button_exit.pack(pady=5)
 
-# Rozpoczęcie pętli głównej Tkinter
-root.mainloop()
+if __name__ == '__main__':
+    root.mainloop()

@@ -1,8 +1,10 @@
 import tkinter as tk
-from tkinter import NO, W, ttk
+from tkinter import NO, W, ttk, messagebox
 import datetime
 import mysql.connector
 import subprocess
+import requests
+import json
 
 ####### funkcja do wyśrodkowania głównego okna #######
 def center_window(window, width, height):
@@ -20,7 +22,30 @@ window_height = 940
 center_window(root, window_width, window_height)
 root.resizable(False,False)
 
-# Funkcja do sprawdzania statusu bazy danych MySQL
+####### Funkcja do sprawdzenia godzin lub dni lotto #######
+def sprawdz_godzine():
+    subprocess.Popen(["python", "sprawdz_godzine.py"])
+
+####### Funkcja do sprawdzania aktualizacji #######
+def check_update():
+    github_repo = "https://api.github.com/repos/Roksia33/Program-do-zarzadzania-bazy-lotto/releases/latest"
+
+    try:
+        response = requests.get(github_repo)
+        response.raise_for_status()
+        release_info = json.loads(response.text)
+        latest_version = release_info["tag_name"]
+
+        if latest_version == "v1.1.0":
+            messagebox.showinfo("Aktualizacja", "Masz najnowszą wersję programu.")
+        else:
+            messagebox.showinfo("Aktualizacja", f"Dostępna jest nowa wersja programu: {latest_version}")
+    except requests.exceptions.RequestException:
+        messagebox.showerror("Błąd", "Nie można nawiązać połączenia z GitHub.")
+    except Exception as e:
+        messagebox.showerror("Błąd", f"Wystąpił błąd: {str(e)}")
+
+####### Funkcja do sprawdzania statusu bazy danych MySQL #######
 def sprawdz_status_bazy():
     try:
         # Nawiązujemy połączenie z bazą danych
@@ -48,31 +73,39 @@ def sprawdz_status_bazy():
 
 ####### Lotto #######
 def Lotto():
-    subprocess.Popen(["python", "Lotto.py"])
+    subprocess.Popen(["python", "dodawanie_danych/Lotto.py"])
 
 ####### Eurojackpot #######
 def Eurojackpot():
-    subprocess.Popen(["python", "Eurojackpot.py"])
+    subprocess.Popen(["python", "dodawanie_danych/Eurojackpot.py"])
 
 ####### Keno #######
 def Keno():
-    subprocess.Popen(["python", "Keno.py"])
+    subprocess.Popen(["python", "dodawanie_danych/Keno.py"])
 
 ####### Szybkie 600 #######
 def Szybkie_600():
-    subprocess.Popen(["python", "Szybkie_600.py"])
+    subprocess.Popen(["python", "dodawanie_danych/Szybkie_600.py"])
 
 ####### Multi Multi #######
 def Multi_Multi():
-    subprocess.Popen(["python", "Multi_multi.py"])
+    subprocess.Popen(["python", "dodawanie_danych/Multi_multi.py"])
 
 ####### Ekstra Pensja #######
 def Ekstra_Pensja():
-    subprocess.Popen(["python", "Ekstra_pensja.py"])
+    subprocess.Popen(["python", "dodawanie_danych/Ekstra_pensja.py"])
 
 ####### Mini Lotto #######
 def Mini_Lotto():
-    subprocess.Popen(["python", "Mini_lotto.py"])
+    subprocess.Popen(["python", "dodawanie_danych/Mini_lotto.py"])
+
+####### Kalendarz losowań lotto #######
+def Kalendarz_lotto():
+    subprocess.Popen(["python", "kll.py"])
+
+####### Maszyna losująca lotto #######
+def ml():
+    subprocess.Popen(["python", "Maszyna_losująca/main.py"])
 
 ####### Funkcja do wyświetlania aktualnej godziny i daty na pierwszej zakładce #######
 def display_time_date():
@@ -82,9 +115,9 @@ def display_time_date():
     label_time_date.config(text=f"Aktualna godzina: {current_time}\nAktualna data: {current_date}")
     root.after(1000, display_time_date)
 
-####### Funkcja do wyświetlania powtarzających się liczb #######
+####### Funkcja do sprawdzenia najczęstych losowanych liczb #######
 def check_duplicates():
-    subprocess.Popen(["python", "LA.py"])
+    subprocess.Popen(["python", "nll.py"])
 
 ####### Funkcja do modyfikacji tabeli w bazie danych #######
 def update_database():
@@ -133,6 +166,13 @@ def check_records():
 def check_l():
     subprocess.Popen(["python", "spl.py"])
 
+####### Funkcja, która zapyta o wyjście z programu #######
+def exit_program():
+    result = messagebox.askquestion("Wyjście", "Czy na pewno chcesz wyjść z programu?")
+    if result == "yes":
+        root.quit()
+
+
 ####### Zakładki #######
 notebook = ttk.Notebook(root)
 notebook.pack(fill=tk.BOTH, expand=True)
@@ -141,7 +181,7 @@ notebook.pack(fill=tk.BOTH, expand=True)
 tab1 = tk.Frame(notebook)
 notebook.add(tab1, text="Strona główna")
 
-label_text= tk.Label(tab1, text="˃Statusu bazy danych MySQL: ", font=("Helvetica", 15))
+label_text= tk.Label(tab1, text="˃Status bazy danych MySQL: ", font=("Helvetica", 15))
 label_text.place(x=7,y=10)
 status_label = tk.Label(tab1, text="Sprawdzanie statusu...", fg="blue", font=("Helvetica", 15))
 status_label.place(x=285,y=10)
@@ -154,13 +194,10 @@ label_time_date.pack(pady=20)
 
 display_time_date()
 
-image = tk.PhotoImage(file=r"lotto.png")
+image = tk.PhotoImage(file=r"pic/lotto.png")
 image_label = tk.Label(tab1, image=image)
 image_label.image = image
 image_label.pack(pady=20)
-
-V_label = tk.Label(tab1, text="Ver. 1.0.0", font=("Helvetica", 15))
-V_label.pack(pady=50)
 
 ####### Zakładka 2: Wprowadzanie danych #######
 tab2 = tk.Frame(notebook)
@@ -168,7 +205,6 @@ label = tk.Label(tab2, text="Wybierz typ Lotto", font=("Helvetica", 25))
 label.pack(pady=20)
 
 notebook.add(tab2, text="Dodaj dane")
-
 
 button_lotto = tk.Button(tab2, text="Lotto", height = 7, width = 20, bg='#3cc6e0', command=Lotto, font=("Helvetica", 16))
 button_lotto.place(x=15,y=90)
@@ -191,29 +227,26 @@ button_ekstra_pensja.place(x=535,y=290)
 button_mini_lotto = tk.Button(tab2, text="Mini Lotto", height = 7, width = 20, bg='#fdca51', command=Mini_Lotto, font=("Helvetica", 16))
 button_mini_lotto.place(x=275,y=490)
 
-
 ####### Zakładka 3: Zarządzanie bazą #######
 tab3 = tk.Frame(notebook)
 notebook.add(tab3, text="Zarządzanie bazą")
 label = tk.Label(tab3, text="Zarządzaj bazą", font=("Helvetica", 25))
 label.pack(pady=20)
 
-button_check_duplicates = tk.Button(tab3, text="Sprawdź powtórzenia", height = 3, width = 25, bg='#ffb92d', command=check_duplicates, font=("Helvetica", 16))
+button_check_duplicates = tk.Button(tab3, text="Sprawdź najczęstsze losowane liczby", height = 3, width = 29, bg='#ffb92d', command=check_duplicates, font=("Helvetica", 16))
 button_check_duplicates.pack(pady=10)
 
-button_check_l = tk.Button(tab3, text="Sprawdź ostatnie powtórzenia", height = 3, width = 25, bg='#ffb92d', command=check_l, font=("Helvetica", 16))
+button_check_l = tk.Button(tab3, text="Sprawdź ostatnie 20 wyników lotto", height = 3, width = 29, bg='#ffb92d', command=check_l, font=("Helvetica", 16))
 button_check_l.pack(pady=10)
 
-button_check_records = tk.Button(tab3, text="Sprawdź liczbę rekordów", height = 3, width = 25, bg='#ffb92d', command=check_records, font=("Helvetica", 16))
+button_check_records = tk.Button(tab3, text="Sprawdź liczbę rekordów", height = 3, width = 29, bg='#ffb92d', command=check_records, font=("Helvetica", 16))
 button_check_records.pack(pady=10)
 
-
-button_update = tk.Button(tab3, text="Zmień dane", height = 3, width = 25, bg='#ffb92d', command=update_database, font=("Helvetica", 16))
+button_update = tk.Button(tab3, text="Zmień dane", height = 3, width = 29, bg='#ffb92d', command=update_database, font=("Helvetica", 16))
 button_update.pack(pady=10)
 
-open_database_button = tk.Button(tab3, text="Otwórz bazę danych", height = 3, width = 25, bg='#ffb92d', command=show_database_window, font=("Helvetica", 16))
+open_database_button = tk.Button(tab3, text="Otwórz bazę danych", height = 3, width = 29, bg='#ffb92d', command=show_database_window, font=("Helvetica", 16))
 open_database_button.pack(pady=10)
-
 
 ####### Zakładka 4: Menu #######
 tab4 = tk.Frame(notebook)
@@ -222,8 +255,22 @@ notebook.add(tab4, text="Menu")
 label = tk.Label(tab4, text="Menu", font=("Helvetica", 25))
 label.pack(pady=20)
 
-button_exit = tk.Button(tab4, text="Wyjście",height = 3, width = 25, bg='#ffb92d', command=root.quit, font=("Helvetica", 16))
+check_button = tk.Button(tab4, text="Sprawdź Aktualizację",height = 3, width = 25, bg='#ffb92d', command=check_update, font=("Helvetica", 16))
+check_button.pack(pady=10)
+
+button_calendar = tk.Button(tab4, text="Wyświetl kalendarz losowań",height = 3, width = 25, bg='#ffb92d', command=Kalendarz_lotto, font=("Helvetica", 16))
+button_calendar.pack(pady=10)
+
+button_time = tk.Button(tab4, text="Wyświetl godziny losowań",height = 3, width = 25, bg='#ffb92d', command=sprawdz_godzine, font=("Helvetica", 16))
+button_time.pack(pady=10)
+
+check_button = tk.Button(tab4, text="Włącz maszynę losującą (cmd)",height = 3, width = 25, bg='#ffb92d', command=ml, font=("Helvetica", 16))
+check_button.pack(pady=10)
+
+button_exit = tk.Button(tab4, text="Wyjście",height = 3, width = 25, bg='#ffb92d', command=exit_program, font=("Helvetica", 16))
 button_exit.pack(pady=10)
+
+root.protocol("WM_DELETE_WINDOW", exit_program)
 
 ####### Uruchomienie aplikacji #######
 if __name__ == '__main__':

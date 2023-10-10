@@ -10,7 +10,7 @@ def change_number():
         lotto_type = lotto_type_entry.get()
         new_number = int(new_number_entry.get())
 
-        # Połączenie się z bazą danych
+        # łączenie z bazą danych
         connection = mysql.connector.connect(
             host="localhost",
             user="root",
