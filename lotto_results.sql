@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Paź 10, 2023 at 06:22 PM
+-- Generation Time: Paź 11, 2023 at 04:53 PM
 -- Wersja serwera: 10.4.28-MariaDB
 -- Wersja PHP: 8.2.4
 
@@ -40,16 +40,6 @@ CREATE TABLE `lotto_results` (
   `number8` int(11) DEFAULT NULL,
   `number9` int(11) DEFAULT NULL,
   `number10` int(11) DEFAULT NULL,
-  `number11` int(11) DEFAULT NULL,
-  `number12` int(11) DEFAULT NULL,
-  `number13` int(11) DEFAULT NULL,
-  `number14` int(11) DEFAULT NULL,
-  `number15` int(11) DEFAULT NULL,
-  `number16` int(11) DEFAULT NULL,
-  `number17` int(11) DEFAULT NULL,
-  `number18` int(11) DEFAULT NULL,
-  `number19` int(11) DEFAULT NULL,
-  `number20` int(11) DEFAULT NULL,
   `e_number1` int(11) DEFAULT NULL,
   `e_number2` int(11) DEFAULT NULL,
   `date` date NOT NULL,
