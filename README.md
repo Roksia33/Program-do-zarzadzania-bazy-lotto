@@ -1,6 +1,6 @@
 ## Program do zarządzania bazą Lotto
 
-[![Current Version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/Roksia33/Program-do-zarzadzania-bazy-lotto/tags)
+[![Current Version](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/Roksia33/Program-do-zarzadzania-bazy-lotto/releases)
 
 To narzędzie stworzone w celu ułatwienia zarządzania danymi dotyczącymi wyników gier liczbowych typu Lotto. Program umożliwia łatwe wprowadzanie, edycję oraz przeglądanie ostatnich wyników losowań, co może być przydatne zarówno dla graczy, jak i osób analizujących statystyki losowań.
 
